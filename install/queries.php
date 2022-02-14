@@ -26,6 +26,15 @@ if (!defined("IN_ESO")) exit;
 
 $queries = array();
 
+// Create the categories table.
+$queries[] = "DROP TABLE IF EXISTS {$config["tablePrefix"]}categories";
+$queries[] = "CREATE TABLE {$config["tablePrefix"]}categories (
+	categoryId int unsigned NOT NULL auto_increment,
+	categoryName varchar(63) NOT NULL,
+	categoryDescription text NOT NULL,
+	PRIMARY KEY (categoryId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+
 // Create the conversations table.
 $queries[] = "DROP TABLE IF EXISTS {$config["tablePrefix"]}conversations";
 $queries[] = "CREATE TABLE {$config["tablePrefix"]}conversations (
@@ -135,6 +144,9 @@ $salt = generateRandomString(32);
 $color = rand(1, 27);
 $queries[] = "INSERT INTO {$config["tablePrefix"]}members (memberId, name, email, password, salt, color, account) VALUES 
 (1, '{$_SESSION["install"]["adminUser"]}', '{$_SESSION["install"]["adminEmail"]}', '" . md5($salt . $_SESSION["install"]["adminPass"]) . "', '$salt', $color, 'Administrator')";
+
+// Create the default category.
+$queries[] = "INSERT INTO {$config["tablePrefix"]}categories (categoryName, categoryDescription) VALUES ('General Discussion', 'Talk about anything you like here.')";
 
 // Create default conversations.
 $time = time();
